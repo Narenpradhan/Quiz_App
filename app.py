@@ -1,5 +1,14 @@
 import streamlit as st
+import re
 from data import questions_list
+from pymongo import MongoClient
+
+
+
+client = MongoClient("mongodb://localhost:27017/")  # Replace with your MongoDB URI
+db = client["mydatabase"]  # Replace "mydatabase" with your database name
+collection = db["userdetails"]  # Replace "userdetails" with your collection name
+
 
 
 def quiz_app():
@@ -18,6 +27,8 @@ def quiz_app():
     return score
 
 
+
+
 def home():
     st.markdown("<h1 style='text-align: center;'>Fill Up Your Details</h1>", unsafe_allow_html=True)
     st.markdown("---")
@@ -34,8 +45,12 @@ def home():
     return name, roll, email, branch
 
 
+
+
 if 'final_points' not in st.session_state:
     st.session_state.final_points = 0
+
+
 
 
 if __name__ == "__main__":
@@ -44,18 +59,31 @@ if __name__ == "__main__":
 
     if st.session_state.page == 1:
         name, roll, email, branch = home()
+        st.session_state.name = name
+        st.session_state.roll = roll
+        st.session_state.email = email
+        st.session_state.branch = branch
         submitted = st.button("Next")
         if submitted:
-            if not name:
+            if not name :
                 st.write("Please enter your name.")
+            elif not name.isalpha():
+                st.write("Name should not contain any characters.")
             elif not roll:
                 st.write("Please enter your registration number.")
+            elif not roll.isdigit():
+                st.write("Registration Number should not contain any other characters.")
+            elif not (len(roll)>=10 and len(roll)<13):
+                st.write("Enter a valid registration number.")
             elif not email:
                 st.write("Please enter your e-mail.")
+            elif not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',email):
+                st.write("E-mail address is not valid.")
             elif not branch:
                 st.write("Please select your branch.")
             else:
                 st.session_state.page = 2
+
 
     elif st.session_state.page == 2:
         st.session_state.final_points = quiz_app()
@@ -63,7 +91,21 @@ if __name__ == "__main__":
         if st.button("Previous"):
             st.session_state.page = 1
         elif st.button("Submit"):
+            name = st.session_state.name
+            roll = st.session_state.roll
+            email = st.session_state.email
+            branch = st.session_state.branch
+
+            user_data = {
+                "Name": name,
+                "Roll_No": roll,
+                "Email": email,
+                "Branch": branch
+            }
+            collection.insert_one(user_data)
+            st.write("Quiz Submitted Successfully!")
             st.session_state.page = 3
+    
     
     elif st.session_state.page == 3:
         st.balloons()
