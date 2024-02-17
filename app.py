@@ -6,9 +6,9 @@ import time
 
 
 
-client = MongoClient("mongodb+srv://hritesh532004:9Gx3KKxDjwogHUZk@cluster0.e4l3u0u.mongodb.net/Anweshan?retryWrites=true&w=majority")  # Replace with your MongoDB URI
-db = client["Anweshan"]  # Replace "mydatabase" with your database name
-collection = db["Quiz"]  # Replace "userdetails" with your collection name
+client = MongoClient("mongodb+srv://hritesh532004:9Gx3KKxDjwogHUZk@cluster0.e4l3u0u.mongodb.net/Anweshan?retryWrites=true&w=majority")
+db = client["Anweshan"]
+collection = db["Quiz"]
 
 
 
@@ -47,7 +47,7 @@ def home():
 
 
 def check_records(roll):
-    check_roll = collection.find_one({"Roll": roll})
+    check_roll = collection.find_one({"Roll_No": roll})
     if check_roll:
         return 1
 
@@ -62,6 +62,7 @@ if __name__ == "__main__":
         st.session_state.page = 1
 
     if st.session_state.page == 1:
+        submitted = ""
         name, roll, email, branch = home()
         st.session_state.name = name
         st.session_state.roll = roll
@@ -69,8 +70,11 @@ if __name__ == "__main__":
         st.session_state.branch = branch
 
         ispresent = check_records(roll)
-
-        submitted = st.button("Next")
+        if ispresent:
+            st.info("Record Already Exists.")
+        else:
+            submitted = st.button("Next")
+        
         if submitted:
             if not name :
                 st.info("Please enter your name.")
@@ -90,10 +94,7 @@ if __name__ == "__main__":
             elif not branch:
                 st.info("Please select your branch.")
             else:
-                if ispresent:
-                    st.info("Record Already Exists.")
-                else:
-                    st.session_state.page = 2
+                st.session_state.page = 2
 
 
     elif st.session_state.page == 2:
@@ -107,25 +108,23 @@ if __name__ == "__main__":
     
     
     elif st.session_state.page == 3:
-        db_text = ""
         name = st.session_state.name
         roll = st.session_state.roll
         email = st.session_state.email
         branch = st.session_state.branch
         score = st.session_state.final_points
 
-        if not check_records(roll):
-            user_data = {
-                "Roll_No": roll,
-                "Name": name,
-                "Email": email,
-                "Branch": branch,
-                "Score": score
-            }
-            collection.insert_one(user_data)
+        user_data = {
+            "Roll_No": roll,
+            "Name": name,
+            "Email": email,
+            "Branch": branch,
+            "Score": score
+        }
+        if collection.insert_one(user_data):
             db_text = "Quiz Submitted Successfully!"
         else:
-            db_text = "Record Already Exists!"
+            db_text = "Something Went Wrong!"
         st.balloons()
         st.markdown("""
             <style>
@@ -140,8 +139,8 @@ if __name__ == "__main__":
         """, unsafe_allow_html=True)
         html_text = f"""<div class='centered'>
                             <div>
-                                <h2>{db_text}</h2>
                                 <h1>Congratulations!!👏</h1>
+                                <h2>{db_text}</h2>
                                 <h2 class='centered-text'><b>You scored {score} out of {len(questions_list)}</b></h2>
                             </div>
                         </div>"""
