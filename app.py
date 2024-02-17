@@ -19,6 +19,7 @@ def quiz_app():
     for i, q in enumerate(questions):
         st.subheader(f"Question {i + 1}: {q['question']}")
         user_answer = st.radio("Select an answer:", q["options"], index=None, key=f"{i}")
+        st.markdown("---")
         if user_answer == q["correct_answer"]:
             score += 1
     return score
