@@ -46,11 +46,9 @@ def home():
     return name, roll, email, branch
 
 
-def check_records(roll,name,email):
-    check_roll = collection.find_one({"Roll_No": roll})
-    check_name = collection.find_one({"Name": name})
-    check_email = collection.find_one({"Email": email})
-    if check_roll or check_email or check_name:
+def check_records(roll):
+    check_roll = collection.find_one({"Roll": roll})
+    if check_roll:
         return 1
 
 
@@ -70,7 +68,7 @@ if __name__ == "__main__":
         st.session_state.email = email
         st.session_state.branch = branch
 
-        ispresent = check_records(roll,name,email)
+        ispresent = check_records(roll)
         if ispresent:
             st.info("Record Already Exists.")
 
@@ -108,25 +106,25 @@ if __name__ == "__main__":
     
     
     elif st.session_state.page == 3:
-        ispushed = 0
-
+        db_text = ""
         name = st.session_state.name
         roll = st.session_state.roll
         email = st.session_state.email
         branch = st.session_state.branch
         score = st.session_state.final_points
 
-        user_data = {
-            "Roll_No": roll,
-            "Name": name,
-            "Email": email,
-            "Branch": branch,
-            "Score": score
-        }
-        if collection.insert_one(user_data):
+        if not check_records(roll):
+            user_data = {
+                "Roll_No": roll,
+                "Name": name,
+                "Email": email,
+                "Branch": branch,
+                "Score": score
+            }
+            collection.insert_one(user_data)
             db_text = "Quiz Submitted Successfully!"
         else:
-            db_text = "Something Went Wrong!"
+            db_text = "Record Already Exists!"
         st.balloons()
         st.markdown("""
             <style>
@@ -141,8 +139,8 @@ if __name__ == "__main__":
         """, unsafe_allow_html=True)
         html_text = f"""<div class='centered'>
                             <div>
-                                <h1>Congratulations!!👏</h1>
                                 <h2>{db_text}</h2>
+                                <h1>Congratulations!!👏</h1>
                                 <h2 class='centered-text'><b>You scored {score} out of {len(questions_list)}</b></h2>
                             </div>
                         </div>"""
