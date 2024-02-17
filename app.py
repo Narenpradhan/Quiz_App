@@ -5,9 +5,9 @@ from pymongo import MongoClient
 
 
 
-client = MongoClient("mongodb://localhost:27017/")  # Replace with your MongoDB URI
-db = client["mydatabase"]  # Replace "mydatabase" with your database name
-collection = db["userdetails"]  # Replace "userdetails" with your collection name
+# client = MongoClient("mongodb://localhost:27017/")  # Replace with your MongoDB URI
+# db = client["mydatabase"]  # Replace "mydatabase" with your database name
+# collection = db["userdetails"]  # Replace "userdetails" with your collection name
 
 
 
@@ -59,10 +59,10 @@ if __name__ == "__main__":
 
     if st.session_state.page == 1:
         name, roll, email, branch = home()
-        st.session_state.name = name
-        st.session_state.roll = roll
-        st.session_state.email = email
-        st.session_state.branch = branch
+        # st.session_state.name = name
+        # st.session_state.roll = roll
+        # st.session_state.email = email
+        # st.session_state.branch = branch
         submitted = st.button("Next")
         if submitted:
             if not name :
@@ -91,19 +91,19 @@ if __name__ == "__main__":
         if st.button("Previous"):
             st.session_state.page = 1
         elif st.button("Submit"):
-            name = st.session_state.name
-            roll = st.session_state.roll
-            email = st.session_state.email
-            branch = st.session_state.branch
+            # name = st.session_state.name
+            # roll = st.session_state.roll
+            # email = st.session_state.email
+            # branch = st.session_state.branch
 
-            user_data = {
-                "Name": name,
-                "Roll_No": roll,
-                "Email": email,
-                "Branch": branch
-            }
-            collection.insert_one(user_data)
-            st.write("Quiz Submitted Successfully!")
+            # user_data = {
+            #     "Name": name,
+            #     "Roll_No": roll,
+            #     "Email": email,
+            #     "Branch": branch
+            # }
+            # collection.insert_one(user_data)
+            # st.write("Quiz Submitted Successfully!")
             st.session_state.page = 3
     
     
