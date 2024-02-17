@@ -69,8 +69,6 @@ if __name__ == "__main__":
         st.session_state.branch = branch
 
         ispresent = check_records(roll)
-        if ispresent:
-            st.info("Record Already Exists.")
 
         submitted = st.button("Next")
         if submitted:
@@ -92,7 +90,10 @@ if __name__ == "__main__":
             elif not branch:
                 st.info("Please select your branch.")
             else:
-                st.session_state.page = 2
+                if ispresent:
+                    st.info("Record Already Exists.")
+                else:
+                    st.session_state.page = 2
 
 
     elif st.session_state.page == 2:
