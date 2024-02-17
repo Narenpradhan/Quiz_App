@@ -11,7 +11,11 @@ questions_list = [
             "correct_answer": " A set of rules or instructions required to solve a problem."
         },
         {
-            "question": " Choose the correct option:\n1. int[4]= {10,20,30,40}\n2. int[]={10,20,30,40}\n3.  int[];\n4.  int[4]={10,20} ",
+            "question": '''Choose the correct option:
+            1.int[4]={10,20,30,40}
+    2.int[]={10,20,30,40}
+    3.int[];
+    4.int[4]={10,20}''',
             "options": ["1,2", "1,2,3", "1,3,4", "1,2,4"],
             "correct_answer": "1,2,4"
         },
@@ -21,7 +25,16 @@ questions_list = [
             "correct_answer": "1"
         },
         {
-            "question": """Find the output of the following code -\nint main(){\n printf(" hello world ")\nint a = 5;\nwhile (int i = 2; i<= a; i++){\n\tprintf(" hello world ");\n\ta += 2;\n\ta += 2;\n}\n How many times does " hello world " will print?""",
+            "question": '''Find the output of the following code -
+                int main(){
+                printf(" hello world ")
+                int a = 5;
+                while (int i = 2; i<= a; i++){
+                    printf(" hello world ");
+                    a += 2;
+                    a += 2;
+                }
+    How many times does " hello world " will print?''',
             "options": ["4", "6", "5", "3"],
             "correct_answer": "5"
         },
@@ -56,7 +69,7 @@ questions_list = [
             "correct_answer": "active, saturation"
         },
         {
-            "question": "Which is the correct expression of efficiency of half wave rectifier?", --------
+            "question": "Which is the correct expression of efficiency of half wave rectifier?",
             "options": ["2", "3", "0", "1"],
             "correct_answer": "1"
         },
@@ -132,7 +145,7 @@ questions_list = [
             "correct_answer": " Assumption I is implied "
         },
         {
-            "question": "Arrange the words below in their appropriate sequence. \n 5. Morning  3.facewash  1.brush 2.Take bath  4. Exercise  ",
+            "question": "Arrange the words below in their appropriate sequence. \n 5.Morning 3.facewash 1.brush 2.Take bath 4.Exercise ",
             "options": ["5, 1, 2, 4, 3 ", "5, 3, 4, 1, 2 ", "5, 3, 1, 4, 2 ", "1, 2, 3, 5, 4 "],
             "correct_answer": "5, 3, 1, 4, 2"
         },
