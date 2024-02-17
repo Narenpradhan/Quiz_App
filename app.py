@@ -46,6 +46,7 @@ def check_records(roll):
 if 'final_points' not in st.session_state:
     st.session_state.final_points = 0
 
+
 if __name__ == "__main__":
     if 'page' not in st.session_state:
         st.session_state.page = 1
@@ -87,37 +88,42 @@ if __name__ == "__main__":
 
 
     elif st.session_state.page == 2:
-        st.set_page_config(layout="wide")
-        left_column, right_column = st.columns(2)
-        with left_column:
-            st.markdown("""
-                <style>
-                    .center {
-                        display: flex;
-                        flex-direction: column;
-                        justify-content: center;
-                        align-items: center;
-                        height: 70vh; /* 100% of the viewport height */
-                    }
-                </style>
-            """, unsafe_allow_html=True)
-            time_left = 15
-            for i in range(15,0,-1):
-                time.sleep(1)
-                time_left = i
-            time_text = f'<div class="center"><h1 id="timer_display">Time left: {time_left} seconds</h1></div>'
-            st.markdown(time_text,unsafe_allow_html=True)
+        # st.set_page_config(layout="wide")
+        # left_column, right_column = st.columns(2)
 
-        with right_column:
-            st.session_state.final_points = quiz_app()
-            st.write("")
-            if st.button("Previous"):
-                st.session_state.page = 1
-            elif st.button("Submit"):
-                st.write()
-                st.session_state.page = 3
+        # with left_column:
+        st.session_state.final_points = quiz_app()
+        st.write("")
+        if st.button("Previous"):
+            st.session_state.page = 1
+        elif st.button("Submit"):
+            st.write()
+            st.session_state.page = 3
+
+
+        # with right_column:
+        #     st.markdown("""
+        #         <style>
+        #             .center {
+        #                 display: flex;
+        #                 flex-direction: column;
+        #                 justify-content: center;
+        #                 align-items: center;
+        #                 height: 80vh; /* 100% of the viewport height */
+        #             }
+        #         </style>
+        #     """, unsafe_allow_html=True)
+        #     timer_duration = 10
+        #     timer_placeholder = st.empty()
+        #     # timer_placeholder.write("Timer: ")
+        #     for i in range(timer_duration, 0, -1):
+        #         time_text = f'<div class="center"><h1 id="timer_display">Time left: {i} seconds</h1></div>'
+        #         timer_placeholder.markdown(time_text,unsafe_allow_html=True)
+        #         time.sleep(1)
+                
     
     elif st.session_state.page == 3:
+        st.set_page_config(layout="wide")
         name = st.session_state.name
         roll = st.session_state.roll
         email = st.session_state.email
