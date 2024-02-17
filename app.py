@@ -3,7 +3,6 @@ import re
 from data import questions_list
 from pymongo import MongoClient
 import time
-import random
 
 client = MongoClient("mongodb+srv://hritesh532004:9Gx3KKxDjwogHUZk@cluster0.e4l3u0u.mongodb.net/Anweshan?retryWrites=true&w=majority")
 db = client["Anweshan"]
@@ -14,7 +13,6 @@ def quiz_app():
     st.markdown("---")
 
     questions = questions_list
-    random.shuffle(questions)
 
     score = 0
 
