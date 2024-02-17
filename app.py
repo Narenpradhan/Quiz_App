@@ -4,13 +4,9 @@ from data import questions_list
 from pymongo import MongoClient
 import time
 
-
-
 client = MongoClient("mongodb+srv://hritesh532004:9Gx3KKxDjwogHUZk@cluster0.e4l3u0u.mongodb.net/Anweshan?retryWrites=true&w=majority")
 db = client["Anweshan"]
 collection = db["Quiz"]
-
-
 
 def quiz_app():
     st.markdown("<h1 style='text-align: center;'>IEEE Induction Quiz</h1>", unsafe_allow_html=True)
@@ -27,9 +23,6 @@ def quiz_app():
             score += 1
     return score
 
-
-
-
 def home():
     st.markdown("<h1 style='text-align: center;'>Fill Up Your Details</h1>", unsafe_allow_html=True)
     st.markdown("---")
@@ -45,17 +38,13 @@ def home():
     st.write("")
     return name, roll, email, branch
 
-
 def check_records(roll):
     check_roll = collection.find_one({"Roll_No": roll})
     if check_roll:
         return 1
 
-
 if 'final_points' not in st.session_state:
     st.session_state.final_points = 0
-
-
 
 if __name__ == "__main__":
     if 'page' not in st.session_state:
@@ -98,14 +87,35 @@ if __name__ == "__main__":
 
 
     elif st.session_state.page == 2:
-        st.session_state.final_points = quiz_app()
-        st.write("")
-        if st.button("Previous"):
-            st.session_state.page = 1
-        elif st.button("Submit"):
-            st.write()
-            st.session_state.page = 3
-    
+        st.set_page_config(layout="wide")
+        left_column, right_column = st.columns(2)
+        with left_column:
+            st.markdown("""
+                <style>
+                    .center {
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                        height: 70vh; /* 100% of the viewport height */
+                    }
+                </style>
+            """, unsafe_allow_html=True)
+            time_left = 15
+            for i in range(15,0,-1):
+                time.sleep(1)
+                time_left = i
+            time_text = f'<div class="center"><h1 id="timer_display">Time left: {time_left} seconds</h1></div>'
+            st.markdown(time_text,unsafe_allow_html=True)
+
+        with right_column:
+            st.session_state.final_points = quiz_app()
+            st.write("")
+            if st.button("Previous"):
+                st.session_state.page = 1
+            elif st.button("Submit"):
+                st.write()
+                st.session_state.page = 3
     
     elif st.session_state.page == 3:
         name = st.session_state.name
