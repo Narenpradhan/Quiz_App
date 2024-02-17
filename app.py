@@ -2,12 +2,13 @@ import streamlit as st
 import re
 from data import questions_list
 from pymongo import MongoClient
+import time
 
 
 
-# client = MongoClient("mongodb://localhost:27017/")  # Replace with your MongoDB URI
-# db = client["mydatabase"]  # Replace "mydatabase" with your database name
-# collection = db["userdetails"]  # Replace "userdetails" with your collection name
+client = MongoClient("mongodb+srv://hritesh532004:9Gx3KKxDjwogHUZk@cluster0.e4l3u0u.mongodb.net/Anweshan?retryWrites=true&w=majority")  # Replace with your MongoDB URI
+db = client["Anweshan"]  # Replace "mydatabase" with your database name
+collection = db["Quiz"]  # Replace "userdetails" with your collection name
 
 
 
@@ -34,7 +35,7 @@ def home():
     st.markdown("---")
     st.write("")
     st.write("")
-    name = st.text_input("Enter Your Full Name", placeholder="Hritesh Roshan Mahapatra")
+    name = st.text_input("Enter Your Full Name", placeholder="Full Name")
     st.write("")
     roll = st.text_input("Enter Your Registration Number", placeholder="1234567890")
     st.write("")
@@ -45,11 +46,16 @@ def home():
     return name, roll, email, branch
 
 
+def check_records(roll,name,email):
+    check_roll = collection.find_one({"Roll_No": roll})
+    check_name = collection.find_one({"Name": name})
+    check_email = collection.find_one({"Email": email})
+    if check_roll or check_email or check_name:
+        return 1
 
 
 if 'final_points' not in st.session_state:
     st.session_state.final_points = 0
-
 
 
 
@@ -59,28 +65,34 @@ if __name__ == "__main__":
 
     if st.session_state.page == 1:
         name, roll, email, branch = home()
-        # st.session_state.name = name
-        # st.session_state.roll = roll
-        # st.session_state.email = email
-        # st.session_state.branch = branch
+        st.session_state.name = name
+        st.session_state.roll = roll
+        st.session_state.email = email
+        st.session_state.branch = branch
+
+        ispresent = check_records(roll,name,email)
+        if ispresent:
+            st.info("Record Already Exists.")
+
         submitted = st.button("Next")
         if submitted:
             if not name :
-                st.write("Please enter your name.")
-            elif not name.isalpha():
-                st.write("Name should not contain any characters.")
+                st.info("Please enter your name.")
+            elif name.isspace():
+                if not name.isalpha():
+                    st.error("Name should not contain any characters.")
             elif not roll:
-                st.write("Please enter your registration number.")
+                st.info("Please enter your registration number.")
             elif not roll.isdigit():
-                st.write("Registration Number should not contain any other characters.")
+                st.error("Registration Number should not contain any other characters.")
             elif not (len(roll)>=10 and len(roll)<13):
-                st.write("Enter a valid registration number.")
+                st.error("Enter a valid registration number.")
             elif not email:
-                st.write("Please enter your e-mail.")
+                st.info("Please enter your e-mail.")
             elif not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',email):
-                st.write("E-mail address is not valid.")
+                st.error("E-mail address is not valid.")
             elif not branch:
-                st.write("Please select your branch.")
+                st.info("Please select your branch.")
             else:
                 st.session_state.page = 2
 
@@ -91,23 +103,30 @@ if __name__ == "__main__":
         if st.button("Previous"):
             st.session_state.page = 1
         elif st.button("Submit"):
-            # name = st.session_state.name
-            # roll = st.session_state.roll
-            # email = st.session_state.email
-            # branch = st.session_state.branch
-
-            # user_data = {
-            #     "Name": name,
-            #     "Roll_No": roll,
-            #     "Email": email,
-            #     "Branch": branch
-            # }
-            # collection.insert_one(user_data)
-            # st.write("Quiz Submitted Successfully!")
+            st.write()
             st.session_state.page = 3
     
     
     elif st.session_state.page == 3:
+        ispushed = 0
+
+        name = st.session_state.name
+        roll = st.session_state.roll
+        email = st.session_state.email
+        branch = st.session_state.branch
+        score = st.session_state.final_points
+
+        user_data = {
+            "Roll_No": roll,
+            "Name": name,
+            "Email": email,
+            "Branch": branch,
+            "Score": score
+        }
+        if collection.insert_one(user_data):
+            db_text = "Quiz Submitted Successfully!"
+        else:
+            db_text = "Something Went Wrong!"
         st.balloons()
         st.markdown("""
             <style>
@@ -120,5 +139,11 @@ if __name__ == "__main__":
                 }
             </style>
         """, unsafe_allow_html=True)
-        html_text = f"<div class='centered'><div><h1>Congratulations!!👏</h1><h1 class='centered-text'><b>You scored {st.session_state.final_points} out of 30</b></h1></div></div>"
+        html_text = f"""<div class='centered'>
+                            <div>
+                                <h1>Congratulations!!👏</h1>
+                                <h2>{db_text}</h2>
+                                <h2 class='centered-text'><b>You scored {score} out of {len(questions_list)}</b></h2>
+                            </div>
+                        </div>"""
         st.markdown(html_text, unsafe_allow_html=True)
